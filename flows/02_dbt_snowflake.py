@@ -5,21 +5,14 @@ import prefect
 from prefect import task, Flow, Parameter
 from prefect.client import Secret
 from prefect.tasks.dbt.dbt import DbtShellTask
-from prefect.storage import GitHub
 from prefect.triggers import all_finished
-from prefect.run_configs import LocalRun
 import pygit2
 import shutil
+from flow_utilities.prefect_configs import set_run_config, set_storage
 
 
 DBT_PROJECT = "jaffle_shop"
 FLOW_NAME = "02_dbt_snowflake"
-STORAGE = GitHub(
-    repo="anna-geller/prefect-dbt-k8s-snowflake",
-    ref="prefect-dbt-snowflake",
-    path=f"flows/{FLOW_NAME}.py",
-    access_token_secret="GITHUB_ACCESS_TOKEN",
-)
 
 
 @task(name="Clone DBT repo")
@@ -62,7 +55,10 @@ def print_dbt_output(output):
         logger.info(line)
 
 
-with Flow(FLOW_NAME, storage=STORAGE, run_config=LocalRun(labels=["dev"]),) as flow:
+with Flow(FLOW_NAME,
+          storage=set_storage(FLOW_NAME),
+          run_config=set_run_config(),
+          ) as flow:
     del_task = delete_dbt_folder_if_exists()
     dbt_repo = Parameter(
         "dbt_repo_url", default="https://github.com/anna-geller/jaffle_shop"

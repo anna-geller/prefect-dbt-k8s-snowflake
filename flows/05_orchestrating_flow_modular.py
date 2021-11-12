@@ -1,18 +1,14 @@
 from prefect import Flow
-from prefect.storage import GitHub
 from prefect.tasks.prefect import create_flow_run, wait_for_flow_run
-from prefect.run_configs import LocalRun
+from flow_utilities.prefect_configs import set_run_config, set_storage
 
 FLOW_NAME = "05_orchestrating_flow_modular"
-STORAGE = GitHub(
-    repo="anna-geller/flow-of-flows",
-    path=f"flows/{FLOW_NAME}.py",
-    access_token_secret="GITHUB_ACCESS_TOKEN",
-)
 PROJECT_NAME = "jaffle_shop"
 
 
-with Flow(FLOW_NAME, storage=STORAGE, run_config=LocalRun(labels=["dev"])) as flow:
+with Flow(
+    FLOW_NAME, storage=set_storage(FLOW_NAME), run_config=set_run_config(),
+) as flow:
     extract_load_id = create_flow_run(
         flow_name="01_extract_load",
         project_name=PROJECT_NAME,
