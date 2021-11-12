@@ -21,7 +21,6 @@ with Flow(
     transform_id = create_flow_run(
         flow_name="02_dbt_snowflake",
         project_name=PROJECT_NAME,
-        raise_final_state=True,
         task_args={"name": "DBT flow"},
     )
     transform_id_wait_task = wait_for_flow_run(
