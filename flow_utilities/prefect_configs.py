@@ -3,14 +3,14 @@ from prefect.storage.github import GitHub
 from prefect.client.secrets import Secret
 
 
-def set_run_config(local: bool = True) -> RunConfig:
+def set_run_config(local: bool = False) -> RunConfig:
     if local:
-        return LocalRun(labels=["dev", "Anna.fritz.box"])
+        return LocalRun(labels=["dev"])
     aws_account_id = Secret("AWS_ACCOUNT_ID").get()
     return KubernetesRun(
         labels=["prod"],
-        image=f"{aws_account_id}.dkr.ecr.us-east-1.amazonaws.com/prefect-dbt-demo:latest",
-        image_pull_secrets=["ecr"],
+        image=f"{aws_account_id}.dkr.ecr.us-east-1.amazonaws.com/prefect-dbt-k8s-snowflake:latest",
+        image_pull_policy="IfNotPresent",
     )
 
 

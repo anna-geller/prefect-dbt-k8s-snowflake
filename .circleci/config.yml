@@ -1,0 +1,10 @@
+version: 2
+jobs:
+  build:
+    docker:
+      - image: prefecthq/prefect:latest-python3.9
+    steps:
+      - checkout  # checkout source code to working directory
+      - run: pip install .
+      - run: prefect auth login --key $PREFECT_API_KEY
+      - run: prefect register --project jaffle_shop -p flows/
