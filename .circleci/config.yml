@@ -7,6 +7,5 @@ jobs:
       - checkout  # checkout source code to working directory
       - run: pip install .
       - run: prefect backend cloud
-      - run: export PREFECT__CLOUD__USE_LOCAL_SECRETS=false
       - run: prefect auth login --key $PREFECT_API_KEY
-      - run: prefect register --project jaffle_shop -p flows/
+      - run: export PREFECT__CLOUD__USE_LOCAL_SECRETS=false && prefect register --project jaffle_shop -p flows/
